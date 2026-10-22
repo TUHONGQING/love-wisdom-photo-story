@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 650" fill="none">
+  <defs>
+    <linearGradient id="stem" x1="0" x2="1" y1="0" y2=".5"><stop stop-color="#151515" stop-opacity=".66"/><stop offset="1" stop-color="#151515" stop-opacity=".13"/></linearGradient>
+    <radialGradient id="wash"><stop stop-color="#454545" stop-opacity=".11"/><stop offset="1" stop-color="#454545" stop-opacity="0"/></radialGradient>
+    <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2"/></filter>
+  </defs>
+  <ellipse cx="88" cy="350" rx="110" ry="250" fill="url(#wash)"/>
+  <g filter="url(#rough)" stroke="url(#stem)" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M28 643C68 536 76 430 98 319c18-88 41-164 54-286" stroke-width="6"/>
+    <path d="M64 641c28-137 56-228 101-318 24-48 48-91 63-154" stroke-width="3.2"/>
+    <path d="M90 430c-42-85-50-180-58-269" stroke-width="2.8"/>
+    <path d="M97 332c40-59 79-88 137-112M114 242c-41-58-70-87-95-105M151 117c32-26 65-43 110-44" stroke-width="2"/>
+  </g>
+  <g fill="#1b1b1b" opacity=".48" filter="url(#rough)">
+    <path d="M139 114Q100 84 66 88q33 20 73 26ZM143 122q-13 52-44 74 5-42 44-74ZM156 102q39-27 76-17-38 21-76 17ZM164 91q-7-47 11-77 7 41-11 77Z"/>
+    <path d="M112 239Q72 204 36 211q31 23 76 28ZM119 239q-2 52-32 85 1-47 32-85ZM124 235q46-28 90-22-44 24-90 22Z"/>
+    <path d="M163 324q-9-53 16-85 2 48-16 85ZM172 320q45-35 85-28-38 30-85 28ZM157 334q-41-24-79-17 31 24 79 17Z"/>
+    <path d="M93 428q-46-26-82-18 35 22 82 18ZM95 438q-13 56-38 79 1-45 38-79ZM106 429q37-21 78-18-40 21-78 18Z"/>
+    <path d="M199 263q17-40 50-52-14 37-50 52ZM217 250q38-7 67 9-35 7-67-9ZM37 203q-29-36-36-67 30 27 36 67Z"/>
+  </g>
+  <g stroke="#333" stroke-opacity=".13" stroke-width="1.2" stroke-linecap="round">
+    <path d="M83 409l22 1M99 318l22 3M116 235l20 2M139 117l18 4M76 524l18 3"/>
+  </g>
+</svg>
+
