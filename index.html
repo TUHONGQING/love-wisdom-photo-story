@@ -50,9 +50,9 @@ body.skip-intro #title{animation:none;opacity:.9}
 <body>
 <section id="home" aria-label="水墨画中的九个主题"><div id="stage"><h1 id="title">传承爱与正见<small>生命更有品质</small></h1></div></section>
 <div id="entry"><button id="enter" type="button" aria-label="轻触入卷"><img src="assets/seal-small.png" alt=""><span>入卷</span></button></div>
-<video id="opening" playsinline preload="auto" aria-hidden="true"><source src="assets/ink-opening-soft-small.mp4" type="video/mp4"></video>
+<video id="opening" muted playsinline webkit-playsinline preload="auto" aria-hidden="true"><source src="assets/ink-opening-silent.mp4" type="video/mp4"></video>
 <audio id="bgm" src="assets/bgm/bgm-qinghuaci-small.m4a" preload="none" loop></audio>
-<button id="mute" type="button" aria-label="静音背景音乐" aria-pressed="false" hidden><img src="assets/seal-small.png" alt=""><span>音</span></button>
+<button id="mute" type="button" aria-label="暂停背景音乐" aria-pressed="true" hidden><img src="assets/seal-small.png" alt=""><span>静</span></button>
 <div id="inkveil" aria-hidden="true"></div>
 <section id="theme" role="dialog" aria-modal="true" aria-labelledby="theme-caption" aria-hidden="true"><div class="theme-art theme-art-left" aria-hidden="true"></div><div class="theme-art theme-art-right" aria-hidden="true"></div><img id="theme-photo" alt=""><div id="photo-controls" aria-label="切换照片"><button id="photo-prev" type="button" aria-label="上一张照片">‹</button><button id="photo-next" type="button" aria-label="下一张照片">›</button></div><p id="theme-caption"></p><img id="stroke" src="assets/brush-stroke.png" alt=""><button id="back" type="button" aria-label="返回"><img src="assets/seal-small.png" alt=""><span>返回</span></button></section>
 <script>
@@ -69,16 +69,15 @@ const SPOTS=[
 const stage=document.getElementById('stage'),entry=document.getElementById('entry'),opening=document.getElementById('opening'),bgm=document.getElementById('bgm'),mute=document.getElementById('mute'),veil=document.getElementById('inkveil'),theme=document.getElementById('theme'),themePhoto=document.getElementById('theme-photo'),caption=document.getElementById('theme-caption'),controls=document.getElementById('photo-controls'),prev=document.getElementById('photo-prev'),next=document.getElementById('photo-next'),back=document.getElementById('back');
 let activeSpot=null,activeButton=null,photoIndex=0,busy=false,switchTimer=0,photoSwitching=false;
 SPOTS.forEach(spot=>{const button=document.createElement('button');button.type='button';button.className='spot';button.style.left=spot.x+'%';button.style.top=spot.y+'%';button.style.width=(spot.r*2)+'%';button.setAttribute('aria-label',spot.name+'：'+spot.caption);button.innerHTML='<span class="bloom" aria-hidden="true"></span>';button.addEventListener('click',event=>openTheme(event,spot,button));stage.appendChild(button)});
-let introClosing=false,started=false,musicMuted=false,musicFrame=0;
-function fadeMusic(target,duration){cancelAnimationFrame(musicFrame);const from=bgm.volume,start=performance.now();function step(now){const t=Math.min(1,(now-start)/duration);bgm.volume=from+(target-from)*t;if(t<1)musicFrame=requestAnimationFrame(step)}musicFrame=requestAnimationFrame(step)}
+let introClosing=false,started=false;
+function syncMusicButton(){const playing=!bgm.paused;mute.setAttribute('aria-pressed',String(playing));mute.setAttribute('aria-label',playing?'暂停背景音乐':'播放背景音乐');mute.querySelector('span').textContent=playing?'静':'乐'}
 function closeIntro(skipped=false){if(introClosing||!opening.isConnected)return;introClosing=true;if(skipped){document.body.classList.add('skip-intro');opening.remove();mute.hidden=false;return}opening.classList.add('fading');opening.addEventListener('transitionend',event=>{if(event.propertyName==='opacity'){opening.remove();mute.hidden=false}},{once:true});window.setTimeout(()=>{opening.remove();mute.hidden=false},3200)}
-function startExperience(){if(started)return;started=true;entry.remove();bgm.volume=0;bgm.play().then(()=>fadeMusic(.25,3000)).catch(()=>{});if(!opening.isConnected||window.matchMedia('(prefers-reduced-motion: reduce)').matches){closeIntro(true);return}document.body.classList.add('intro-started');opening.classList.add('playing');opening.playbackRate=.75;opening.play().catch(()=>closeIntro(true))}
+function startExperience(){if(started)return;started=true;entry.remove();opening.muted=true;opening.volume=0;bgm.volume=.25;bgm.play().then(syncMusicButton).catch(syncMusicButton);if(!opening.isConnected||window.matchMedia('(prefers-reduced-motion: reduce)').matches){closeIntro(true);return}document.body.classList.add('intro-started');opening.classList.add('playing');opening.playbackRate=.75;opening.play().catch(()=>closeIntro(true))}
 document.getElementById('enter').addEventListener('click',startExperience);
-document.addEventListener('click',startExperience,{once:true});
 opening.addEventListener('timeupdate',()=>{if(opening.currentTime>=3)closeIntro()});
 opening.addEventListener('ended',()=>closeIntro());
 opening.addEventListener('error',()=>{if(started)closeIntro(true)});
-mute.addEventListener('click',()=>{musicMuted=!musicMuted;mute.setAttribute('aria-pressed',String(musicMuted));mute.setAttribute('aria-label',musicMuted?'播放背景音乐':'静音背景音乐');mute.querySelector('span').textContent=musicMuted?'静':'音';fadeMusic(musicMuted?0:.25,800)});
+mute.addEventListener('click',()=>{if(bgm.paused)bgm.play().then(syncMusicButton).catch(syncMusicButton);else{bgm.pause();syncMusicButton()}});
 // 对外发布如需改用备选曲，将 bgm 的 src 换为 assets/bgm/bgm-liushui.mp3。
 function setPhoto(index){photoIndex=index;const item=activeSpot.photos[index];themePhoto.src=item.src;themePhoto.alt=item.alt;prev.disabled=index===0;next.disabled=index===activeSpot.photos.length-1;controls.hidden=activeSpot.photos.length<2}
 function inkAt(x,y,startScale){veil.style.transition='none';veil.style.left=x+'px';veil.style.top=y+'px';veil.style.opacity='1';veil.style.transform=`translate(-50%,-50%) scale(${startScale})`;void veil.offsetWidth}
